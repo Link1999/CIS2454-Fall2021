@@ -5,7 +5,5 @@
         <title></title>
     </head>
     <body>
-        <a href='index.php'>Index</a>
+        <a href='index.php'>Add/Update/Delete</a>
         <a href='listPeople.php'>List People</a>
-        <a href='updatePerson.php'>Update Person</a>
-        <a href='deletePerson.php'>Delete Person</a>

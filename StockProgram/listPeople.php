@@ -1,5 +1,7 @@
 <?php
 
+$last_name = htmlspecialchars(filter_input(INPUT_GET, 'last_name'));
+
 
 include('topNavigation.php'); 
 echo "</br>"; 
@@ -8,8 +10,17 @@ echo "</br>";
 try {
     require('database.php');
 
-    $query = 'select * from person';
-    $statement = $db->prepare($query);
+    if ( $last_name == "" ){
+        $query = 'select * from person';
+        $statement = $db->prepare($query);
+    } else
+    {
+        $query = 'select * from person where last_name like :last_name';
+        $statement = $db->prepare($query);
+        $last_name = '%' . $last_name . '%';
+        $statement->bindValue(':last_name', $last_name);
+    }    
+    
     $statement->execute();
 
     $people = $statement->fetchAll();
@@ -25,4 +36,16 @@ try {
 } catch (PDOException $ex) {
     echo 'Conection error: ' . $ex->getMessage();
 }
+
 ?>
+
+<h2>Search by last name</h2>
+<form action="listPeople.php" method="get">
+    <div> 
+        <label>Last Name</label>
+        <input type="text" name="last_name"/></br> 
+    </div>
+    <div>
+        <input type='submit' value='Search People'/></br>
+    </div>
+</form>
