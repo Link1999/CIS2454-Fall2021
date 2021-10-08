@@ -14,10 +14,10 @@
 
 <?php foreach ($people as $person) { ?>
     <tr>
-        <td><?php echo $person['id'] ?></td>
-        <td><?php echo $person['first_name'] ?></td>
-        <td><?php echo $person['last_name'] ?></td>
-        <td><?php echo $person['balance'] ?></td>
+        <td><?php echo $person->getId() ?></td>
+        <td><?php echo $person->getFirstName() ?></td>
+        <td><?php echo $person->getLastName() ?></td>
+        <td><?php echo $person->getBalance() ?></td>
     </tr>
 <?php } ?>
 </table>

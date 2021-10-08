@@ -28,7 +28,8 @@ if ($action == "" || $action == 'list_people') {
         include("views/error.php");
     } else {
         include('models/person.php');
-        update_person($id, $last_name, $first_name, $balance);
+        $person = new Person($first_name, $last_name, $balance, $id);
+        update_person($person);
         header("Location: people.php");
     }
 } else if ($action == 'delete_person') {
@@ -40,7 +41,9 @@ if ($action == "" || $action == 'list_people') {
         include('views/error.php');
     } else {
         include('models/person.php');
-        delete_person($id);
+        // we don't care about first name, last name, balance, just the id
+        $person = new Person("", "", 0, $id);
+        delete_person($person);
         header("Location: people.php");
     }
 } else if ($action == 'add_person') {
@@ -54,7 +57,8 @@ if ($action == "" || $action == 'list_people') {
         include('views/error.php');
     } else {
         include('models/person.php');
-        add_person($last_name, $first_name, $balance);
+        $person = new Person( $first_name, $last_name, $balance);
+        add_person($person);
         header("Location: people.php");
     }
 }
@@ -73,7 +77,11 @@ else if ( $action == 'transfer' ){
             $amount *= -1;
         }
         
-        add_money($id, $amount);
+        $person = find_person($id);
+        $person->addMoney($amount);
+        
+        update_person($person);
+        
         header("Location: people.php");
     }
 }
