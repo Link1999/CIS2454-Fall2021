@@ -1,5 +1,11 @@
 
 <?php
+
+session_start();
+if (!isset($_SESSION['username'])) {
+    header("Location: .");
+}
+
 $action = filter_input(INPUT_GET, 'action');
 
 if ($action == "") {
@@ -57,35 +63,33 @@ if ($action == "" || $action == 'list_people') {
         include('views/error.php');
     } else {
         include('models/person.php');
-        $person = new Person( $first_name, $last_name, $balance);
+        $person = new Person($first_name, $last_name, $balance);
         add_person($person);
         header("Location: people.php");
     }
-}
-else if ( $action == 'transfer' ){
+} else if ($action == 'transfer') {
     $id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
     $amount = filter_input(INPUT_POST, 'amount', FILTER_VALIDATE_FLOAT);
     $transfer_method = filter_input(INPUT_POST, 'transfer_method');
-    
-    if ( $id == 0 || $amount <= 0 || $transfer_method == "" ){
+
+    if ($id == 0 || $amount <= 0 || $transfer_method == "") {
         $error = "You must specify a person, a positive amount and method to trasnfer money";
-       include('views/error.php');
-    } else{
+        include('views/error.php');
+    } else {
         include('models/person.php');
-        
-        if ($transfer_method == "withdraw"){
+
+        if ($transfer_method == "withdraw") {
             $amount *= -1;
         }
-        
+
         $person = find_person($id);
         $person->addMoney($amount);
-        
+
         update_person($person);
-        
+
         header("Location: people.php");
     }
 }
 
 include('views/personView.php');
-
 ?>

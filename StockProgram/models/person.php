@@ -5,16 +5,27 @@ class Person{
     private $first_name;
     private $last_name;
     private $balance;
+    private $username;
+    private $passwordhash;
     
-    public function __construct($first_name, $last_name, $balance, $id = 0) {
+    public function __construct($first_name, $last_name, $balance, $id = 0, $username = "", $passwordhash = "") {
         $this->first_name = $first_name;
         $this->last_name = $last_name;
         $this->balance = $balance;
         $this->id = $id;
+        $this->username = $username;
+        $this->passwordhash = $passwordhash;
     }
 
-    
-    public function setId($id): void {
+    public function getUsername() {
+        return $this->username;
+    }
+
+    public function getPasswordhash() {
+        return $this->passwordhash;
+    }
+
+        public function setId($id): void {
         $this->id = $id;
     }
 
@@ -58,7 +69,9 @@ function convert_from_db_to_object($person_row){
             $person_row['first_name'], 
             $person_row['last_name'],
             $person_row['balance'],
-            $person_row['id']
+            $person_row['id'],
+            $person_row['username'],
+            $person_row['passwordhash']
             );
     return $person;
 }
@@ -93,6 +106,22 @@ function list_person($last_name) {
     return $person_list;
 }
 
+function find_person_by_username($username) {
+    require('database.php');
+
+    $query = 'select * from person where username = :username';
+    $statement = $db->prepare($query);
+    $statement->bindValue(':username', $username);
+
+    $statement->execute();
+
+    $person = convert_from_db_to_object($statement->fetch());
+    
+    $statement->closeCursor();
+
+    return $person;
+}
+
 function find_person($id) {
     require('database.php');
 
@@ -114,13 +143,17 @@ function update_person($person) {
 
     $query = "update person set first_name = :first_name, "
             . " last_name = :last_name, "
-            . " balance = :balance "
+            . " balance = :balance, "
+            . " username = :username, "
+            . " passwordhash = :passwordhash "
             . " where id = :id";
 
     $statement = $db->prepare($query);
     $statement->bindValue(':first_name', $person->getFirstName());
     $statement->bindValue(':last_name', $person->getLastName());
     $statement->bindValue(':balance', $person->getBalance());
+    $statement->bindValue(':username', $person->getUserName());
+    $statement->bindValue(':passwordhash', $person->getPasswordhash());
     $statement->bindValue(':id', $person->getId());
 
     $statement->execute();
@@ -145,13 +178,15 @@ function delete_person($person) {
 function add_person($person) {
     require('database.php');
 
-    $query = "insert into person (first_name, last_name, balance )"
-            . " values ( :first_name, :last_name, :balance)";
+    $query = "insert into person (first_name, last_name, balance, username, passwordhash )"
+            . " values ( :first_name, :last_name, :balance, :username, :passwordhash)";
 
     $statement = $db->prepare($query);
     $statement->bindValue(':first_name', $person->getFirstName());
     $statement->bindValue(':last_name', $person->getLastName());
     $statement->bindValue(':balance', $person->getBalance());
+    $statement->bindValue(':username', $person->getUserName());
+    $statement->bindValue(':passwordhash', $person->getPasswordhash());
 
     $statement->execute();
 

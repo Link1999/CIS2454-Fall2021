@@ -1,6 +1,11 @@
 
 <?php
 
+session_start();
+if (!isset($_SESSION['username'])) {
+    header("Location: .");
+}
+
 $action = filter_input(INPUT_GET, 'action');
 
 if ($action == "") {
@@ -46,7 +51,6 @@ if ($action == "" || $action == 'list_stocks') {
 } else if ($action == "delete_stock") {
 
     $symbol = htmlspecialchars(filter_input(INPUT_POST, 'symbol'));
-    
 
     if ($symbol == "") {
         $error = "You must include Symbol";

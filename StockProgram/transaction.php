@@ -1,5 +1,10 @@
 <?php
 
+session_start();
+if (!isset($_SESSION['username'])) {
+    header("Location: .");
+}
+
 $action = filter_input(INPUT_GET, 'action');
 
 if ($action == "") {
@@ -11,9 +16,9 @@ if ($action == "" || $action == 'list_stocks') {
 
     include('models/transactions.php');
     include('models/person.php');
-    
+
     $people = list_person("");
-    
+
     $person_id = filter_input(INPUT_GET, 'person_id', FILTER_VALIDATE_INT);
 
     $transactions = list_transactions($person_id);
@@ -60,19 +65,19 @@ if ($action == "" || $action == 'list_stocks') {
         include("views/error.php");
     } else {
         include('models/transactions.php');
-        
+
         update_transaction($id, $symbol, $person_id, $quantity, $purchase_price, $datetime);
         header("Location: transaction.php");
     }
 } else if ($action == 'delete_transaction') {
     $id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
-    
-    if ($id <= 0 ) {
+
+    if ($id <= 0) {
         $error = "You must include id";
         include("views/error.php");
     } else {
         include('models/transactions.php');
-        
+
         delete_transaction($id);
         header("Location: transaction.php");
     }
